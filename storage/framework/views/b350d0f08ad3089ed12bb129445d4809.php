@@ -262,7 +262,7 @@
     <header class="app-header">
         <nav class="navbar">
             <!-- Logo -->
-            <a href="<?php echo e(url('/dashboard')); ?>" class="my-frs">MyFRS</a>
+            <a href="<?php echo e(url('/dashboard')); ?>" class="my-frs">MyFRS <span>Dosen</span></a>
 
             <!-- User Menu Dropdown -->
             <div class="dropdown">
@@ -291,12 +291,8 @@
         <div class="container">
             <!-- Page Heading -->
             <h2 class="page-title">
-                Dosen Dashboard
-            </h2>
-
-            <h3 style="font-weight: 500; color: #4a5568; margin-bottom: 2rem;">
                 Halo, <?php echo e(Auth::user()->name); ?>!
-            </h3>
+            </h2>
 
             <!-- Grid Container for Cards -->
             <div class="grid-container">

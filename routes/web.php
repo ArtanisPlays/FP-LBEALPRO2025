@@ -7,11 +7,17 @@ use App\Http\Controllers\RpsController;
 use App\Http\Controllers\DosenWaliController;
 use App\Http\Controllers\Admin\MataKuliahController;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Rute untuk menampilkan halaman "menunggu verifikasi" setelah registrasi
+// Rute untuk menampilkan halaman "menunggu verifikasi"
 Route::get('/verification-pending', function () {
     return view('auth.verification-pending');
 })->name('verification.pending');
@@ -33,7 +39,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasi
     Route::post('/rps/store', [RpsController::class, 'store'])->name('rps.store');
     Route::get('/rps/jadwal', [RpsController::class, 'jadwal'])->name('rps.jadwal');
     Route::get('/rps/edit', [RpsController::class, 'edit'])->name('rps.edit');
-    Route::delete('/rps/drop/{mataKuliahId}', [RpsController::class, 'dropMataKuliah'])->name('rps.drop');
+    Route::post('/rps/drop/{mataKuliahId}', [RpsController::class, 'dropMataKuliah'])->name('rps.drop');
     Route::post('/rps/resubmit', [RpsController::class, 'resubmit'])->name('rps.resubmit');
 });
 
@@ -44,13 +50,11 @@ Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->grou
     Route::get('/validasi/{id}', [DosenWaliController::class, 'show'])->name('validasi.show');
     Route::post('/validasi/update/{id}', [DosenWaliController::class, 'updateStatus'])->name('validasi.update');
 
-    // --- MULAI BLOK KODE BARU ---
     // Rute untuk verifikasi pendaftar baru
     Route::get('/verifikasi/list', [DosenWaliController::class, 'verificationList'])->name('verifikasi.list');
     Route::get('/verifikasi/approve/{user}', [DosenWaliController::class, 'showApproveForm'])->name('verifikasi.approve.form');
     Route::post('/verifikasi/approve/{user}', [DosenWaliController::class, 'approveUser'])->name('verifikasi.approve.store');
     Route::post('/verifikasi/reject/{user}', [DosenWaliController::class, 'rejectUser'])->name('verifikasi.reject');
-    // --- AKHIR BLOK KODE BARU ---
 });
 
 // Grup untuk Admin
@@ -58,7 +62,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('matakuliah', MataKuliahController::class);
 });
 
-
-// PASTIKAN BARIS INI ADA DAN TIDAK DI DALAM KOMENTAR
+// Rute Autentikasi (login, register, logout, dll.)
 require __DIR__.'/auth.php';
 

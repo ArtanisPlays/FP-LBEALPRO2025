@@ -1,153 +1,90 @@
-<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
-<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('app-layout'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes([]); ?>
-     <?php $__env->slot('header', null, []); ?> 
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            <?php echo e(__('Detail Rencana Studi Mahasiswa')); ?>
+<!DOCTYPE html>
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Detail RPS Mahasiswa - MyFRS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--ink:#111827;--muted:#6B7280;--bg:#F3F4F6;--card:#fff;--ring:#E5E7EB;--primary:#4F46E5;--danger:#EF4444;--success:#10B981}
+        body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
+        .app-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff}
+        .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+        .brand .logo{background:#fff;color:#111827;border-radius:10px;padding:8px 12px}
+        nav a{color:#e5e7eb;text-decoration:none;margin-right:16px;font-weight:500}
+        .logout-btn{background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
+        .container{max-width:1100px;margin:32px auto;padding:0 20px}
+        .section{background:var(--card);border:1px solid var(--ring);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:24px;margin-bottom:20px}
+        .title{font-size:20px;font-weight:700;margin:0 0 12px}
+        ul{padding-left:18px}
+        .btn{display:inline-block;background:var(--primary);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:600;text-decoration:none;cursor:pointer}
+        .btn-danger{background:var(--danger)}
+        .btn-success{background:var(--success)}
+        textarea{width:100%;border:1px solid var(--ring);border-radius:8px;padding:10px;font-family:inherit;resize:vertical}
+        label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+    </style>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+</head>
+<body>
+    <header class="app-header">
+        <div class="brand"><span class="logo">MyFRS</span><span>Detail RPS</span></div>
+        <nav>
+            <a href="<?php echo e(route('dashboard')); ?>">Dashboard</a>
+            <form action="<?php echo e(route('logout')); ?>" method="POST" style="display:inline">
+                <?php echo csrf_field(); ?>
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </nav>
+    </header>
 
-        </h2>
-     <?php $__env->endSlot(); ?>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Informasi Mahasiswa</h3>
-                    <div class="mt-4 space-y-2">
-                        <div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Nama Lengkap</p>
-                            <p class="text-md text-gray-800 dark:text-gray-200"><?php echo e($rps->mahasiswa->user->name); ?></p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">NIM</p>
-                            <p class="text-md text-gray-800 dark:text-gray-200"><?php echo e($rps->mahasiswa->nim); ?></p>
-                        </div>
-                    </div>
-                </div>
+    <main class="container">
+        <section class="section">
+            <h3 class="title">Informasi Mahasiswa</h3>
+            <div>
+                <div style="color:var(--muted);font-size:12px">Nama Lengkap</div>
+                <div style="margin-bottom:8px"><?php echo e($rps->mahasiswa->user->name); ?></div>
+                <div style="color:var(--muted);font-size:12px">NIM</div>
+                <div><?php echo e($rps->mahasiswa->nim); ?></div>
             </div>
+        </section>
 
-            
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Mata Kuliah yang Diambil</h3>
-                     <ul class="mt-4 list-disc list-inside space-y-2 text-gray-800 dark:text-gray-200">
-                        <?php $__currentLoopData = $rps->mataKuliah; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mk): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <li><?php echo e($mk->kode_mk); ?> - <?php echo e($mk->nama_mk); ?> (<?php echo e($mk->sks); ?> SKS)</li>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </ul>
-                </div>
+        <section class="section">
+            <h3 class="title">Mata Kuliah yang Diambil</h3>
+            <ul>
+                <?php $__currentLoopData = $rps->mataKuliah; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mk): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <li><?php echo e($mk->kode_mk); ?> - <?php echo e($mk->nama_mk); ?> (<?php echo e($mk->sks); ?> SKS)</li>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h3 class="title">Aksi Validasi</h3>
+            <p class="muted">Setujui atau tolak Rencana Studi mahasiswa ini. Anda bisa menambahkan catatan jika menolak.</p>
+            <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-top:12px">
+                <form action="<?php echo e(route('dosen.validasi.update', $rps->id)); ?>" method="POST">
+                    <?php echo csrf_field(); ?>
+                    <input type="hidden" name="status" value="disetujui">
+                    <button type="submit" class="btn btn-success">Setujui RPS</button>
+                </form>
             </div>
-
-            
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Aksi Validasi</h3>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Setujui atau tolak Rencana Studi mahasiswa ini. Anda bisa menambahkan catatan jika menolak.
-                    </p>
-                    <div class="mt-6 flex items-start gap-4">
-                        <!-- Form untuk Menyetujui -->
-                        <form action="<?php echo e(route('dosen.validasi.update', $rps->id)); ?>" method="POST">
-                            <?php echo csrf_field(); ?>
-                            <input type="hidden" name="status" value="disetujui">
-                            <?php if (isset($component)) { $__componentOriginald411d1792bd6cc877d687758b753742c = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginald411d1792bd6cc877d687758b753742c = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.primary-button','data' => ['class' => 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('primary-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['class' => 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600']); ?>
-                                <?php echo e(__('Setujui RPS')); ?>
-
-                             <?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginald411d1792bd6cc877d687758b753742c)): ?>
-<?php $attributes = $__attributesOriginald411d1792bd6cc877d687758b753742c; ?>
-<?php unset($__attributesOriginald411d1792bd6cc877d687758b753742c); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginald411d1792bd6cc877d687758b753742c)): ?>
-<?php $component = $__componentOriginald411d1792bd6cc877d687758b753742c; ?>
-<?php unset($__componentOriginald411d1792bd6cc877d687758b753742c); ?>
-<?php endif; ?>
-                        </form>
+            <div style="margin-top:16px">
+                <form action="<?php echo e(route('dosen.validasi.update', $rps->id)); ?>" method="POST">
+                    <?php echo csrf_field(); ?>
+                    <input type="hidden" name="status" value="ditolak">
+                    <div>
+                        <label for="catatan_tolak">Catatan (Wajib jika ditolak)</label>
+                        <textarea id="catatan_tolak" name="catatan" rows="3"></textarea>
                     </div>
-                    <div class="mt-6">
-                        <!-- Form untuk Menolak -->
-                        <form action="<?php echo e(route('dosen.validasi.update', $rps->id)); ?>" method="POST" class="space-y-4">
-                            <?php echo csrf_field(); ?>
-                            <input type="hidden" name="status" value="ditolak">
-                            <div>
-                                <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'catatan_tolak','value' => __('Catatan (Wajib jika ditolak)')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('input-label'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['for' => 'catatan_tolak','value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Catatan (Wajib jika ditolak)'))]); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
-<?php $attributes = $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
-<?php unset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
-<?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
-<?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
-<?php endif; ?>
-                                <textarea id="catatan_tolak" name="catatan" rows="3" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"></textarea>
-                            </div>
-                            <?php if (isset($component)) { $__componentOriginal656e8c5ea4d9a4fa173298297bfe3f11 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal656e8c5ea4d9a4fa173298297bfe3f11 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.danger-button','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('danger-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes([]); ?>
-                                <?php echo e(__('Tolak RPS')); ?>
-
-                             <?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal656e8c5ea4d9a4fa173298297bfe3f11)): ?>
-<?php $attributes = $__attributesOriginal656e8c5ea4d9a4fa173298297bfe3f11; ?>
-<?php unset($__attributesOriginal656e8c5ea4d9a4fa173298297bfe3f11); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal656e8c5ea4d9a4fa173298297bfe3f11)): ?>
-<?php $component = $__componentOriginal656e8c5ea4d9a4fa173298297bfe3f11; ?>
-<?php unset($__componentOriginal656e8c5ea4d9a4fa173298297bfe3f11); ?>
-<?php endif; ?>
-                        </form>
+                    <div style="margin-top:10px">
+                        <button type="submit" class="btn btn-danger">Tolak RPS</button>
                     </div>
-                </div>
+                </form>
             </div>
-
-        </div>
-    </div>
- <?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
-<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
-<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
-<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
-<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
-<?php endif; ?>
+        </section>
+    </main>
+</body>
+</html>
 
 <?php /**PATH C:\Users\Mitra\KULIAH\SEM 3\LBE\final-web-frs\resources\views/dosen/validasi/show.blade.php ENDPATH**/ ?>

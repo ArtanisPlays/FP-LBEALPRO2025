@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RencanaStudi;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\RencanaStudi; // Tambahkan ini
-use App\Models\User; // Tambahkan ini
 
 class DashboardController extends Controller
 {
@@ -15,40 +15,33 @@ class DashboardController extends Controller
 
         if ($user->role === 'admin') {
             return view('admin.dashboard');
-        } elseif ($user->role === 'dosen') {
-            // --- MULAI BLOK YANG DIPERBARUI ---
-            $dosenId = $user->id;
+        } 
+        
+        if ($user->role === 'dosen') {
+            // Menghitung jumlah RPS yang statusnya 'diajukan' atau 'perlu_persetujuan'
+            $jumlahRpsMenunggu = RencanaStudi::whereHas('mahasiswa', function ($query) use ($user) {
+                $query->where('dosen_wali_id', $user->id);
+            })->whereIn('status', ['diajukan', 'perlu_persetujuan'])->count();
+
+            // Menghitung jumlah mahasiswa baru yang menunggu persetujuan
+            $jumlahPendaftarBaru = User::where('role', 'mahasiswa')->where('status', 'pending')->count();
             
-            // Hitung jumlah RPS yang statusnya 'diajukan' dari mahasiswa bimbingan
-            $jumlahRpsMenunggu = RencanaStudi::whereHas('mahasiswa', function ($query) use ($dosenId) {
-                $query->where('dosen_wali_id', $dosenId);
-            })->where('status', 'diajukan')->count();
-
-            // Hitung jumlah pendaftar baru yang statusnya 'pending'
-            $jumlahPendaftarBaru = User::where('role', 'mahasiswa')
-                                           ->where('status', 'pending')
-                                           ->count();
-                                           
-            // Kirim kedua variabel ke view
             return view('dosen.dashboard', compact('jumlahRpsMenunggu', 'jumlahPendaftarBaru'));
-            // --- AKHIR BLOK YANG DIPERBARUI ---
-
-        } elseif ($user->role === 'mahasiswa') {
+        } 
+        
+        // Logika untuk Mahasiswa
+        if ($user->mahasiswa) {
             $mahasiswa = $user->mahasiswa;
-
-            // Jika akun mahasiswa ada tapi datanya belum lengkap
-            if (!$mahasiswa) {
-                return view('mahasiswa.data_tidak_lengkap');
-            }
-
             $rps = RencanaStudi::where('mahasiswa_id', $mahasiswa->id)
-                ->where('tahun_akademik', '2024/2025') // Contoh tahun akademik
+                ->where('tahun_akademik', '2024/2025') // TODO: Dinamiskan
                 ->first();
+            
+            // HANYA kirim data mahasiswa dan rps, BUKAN daftar mata kuliah
             return view('mahasiswa.dashboard', compact('mahasiswa', 'rps'));
         }
 
-        // Fallback untuk peran lain atau jika ada kondisi tak terduga
-        return view('dashboard');
+        // Jika data mahasiswa belum ada setelah login (misal: baru register)
+        return view('mahasiswa.data_tidak_lengkap');
     }
 }
 

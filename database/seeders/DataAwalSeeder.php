@@ -34,8 +34,8 @@ class DataAwalSeeder extends Seeder
         ]);
 
         $dosen = User::create([
-            'name' => 'Budi Santoso',
-            'email' => 'budi.dosen@kampus.com',
+            'name' => 'Prof. Dr. Budi Budiman, S.Kom., M.Sc.',
+            'email' => 'budi.dosen@its.ac.id',
             'password' => bcrypt('password'),
             'role' => 'dosen',
             'status' => 'active', // Set status menjadi active
@@ -43,17 +43,36 @@ class DataAwalSeeder extends Seeder
 
         $mahasiswaUser = User::create([
             'name' => 'Rina Pertiwi',
-            'email' => 'rina.mahasiswa@kampus.com',
+            'email' => 'rina.mahasiswa@its.ac.id',
             'password' => bcrypt('password'),
             'role' => 'mahasiswa',
             'status' => 'active', // Set status menjadi active
         ]);
 
-        // --- BUAT DETAIL MAHASISWA ---
+        $mahasiswaUser = User::create([
+            'name' => 'Mitra Partogi',
+            'email' => 'mitra.mahasiswa@its.ac.id',
+            'password' => bcrypt('password'),
+            'role' => 'mahasiswa',
+            'status' => 'active', // Set status menjadi active
+        ]);
+
+        // --- detail awal mahasiswa ---
+        
+        $rinaUser = User::where('email', 'rina.mahasiswa@its.ac.id')->first();
         Mahasiswa::create([
-            'user_id' => $mahasiswaUser->id,
+            'user_id' => $rinaUser->id,
             'dosen_wali_id' => $dosen->id,
-            'nim' => '123456789',
+            'nim' => '5025241091',
+            'program_studi' => 'Teknik Informatika',
+        ]);
+
+        
+        $mitraUser = User::where('email', 'mitra.mahasiswa@its.ac.id')->first();
+        Mahasiswa::create([
+            'user_id' => $mitraUser->id,
+            'dosen_wali_id' => $dosen->id,
+            'nim' => '5025241017',
             'program_studi' => 'Teknik Informatika',
         ]);
         
