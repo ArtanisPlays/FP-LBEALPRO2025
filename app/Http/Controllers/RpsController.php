@@ -21,20 +21,19 @@ class RpsController extends Controller
             ->orderBy('semester', 'asc')
             ->get();
         
-        // --- MODIFIKASI UNTUK DEMO SPESIFIK ---
-        // Logika ini hanya berlaku untuk Rina
+        // khsus rina, dia belum lulus strukdat
         if ($currentUser->email === 'rina.mahasiswa@its.ac.id') {
-            // Jika user adalah Rina, anggap dia BELUM LULUS Struktur Data
+            // if user rina ga lulus strukdat
             $passedCourseCodes = $completedCourses->where('kode_mk', '!=', 'EF234201')->pluck('kode_mk')->toArray();
         } else {
-            // Untuk mahasiswa lain, anggap semua mata kuliah sebelumnya LULUS
+           
             $passedCourseCodes = $completedCourses->pluck('kode_mk')->toArray();
         }
 
 
-        // Ambil semua mata kuliah yang ditawarkan di semester ini DAN semester atas
+        // ambil semua mata kuliah yang ditawarkan di semester ini DAN semester atas
         $availableCourses = MataKuliah::where('semester', '>=', $currentSemester)
-                                ->with('prerequisites') // Eager load prerequisites
+                                ->with('prerequisites') // load prasyarat
                                 ->orderBy('semester', 'asc')
                                 ->get();
         
@@ -70,7 +69,7 @@ class RpsController extends Controller
         
         $currentSemester = 3;
         
-        // --- MODIFIKASI UNTUK DEMO SPESIFIK (SAAT MENYIMPAN) ---
+        // khsuus rina  ---
         if ($currentUser->email === 'rina.mahasiswa@its.ac.id') {
              $passedCourseCodes = MataKuliah::where('semester', '<', $currentSemester)
                 ->where('kode_mk', '!=', 'EF234201')
@@ -125,7 +124,7 @@ class RpsController extends Controller
     {
         $mahasiswa = Auth::user()->mahasiswa;
         $rps = RencanaStudi::where('mahasiswa_id', $mahasiswa->id)
-            ->where('tahun_akademik', '2024/2025') // TODO: Dinamiskan nanti
+            ->where('tahun_akademik', '2024/2025') 
             ->where('status', 'disetujui')
             ->with('mataKuliah')
             ->firstOrFail();
@@ -137,7 +136,7 @@ class RpsController extends Controller
     {
         $mahasiswa = Auth::user()->mahasiswa;
         $rps = RencanaStudi::where('mahasiswa_id', $mahasiswa->id)
-            ->where('tahun_akademik', '2024/2025') // TODO: Dinamiskan nanti
+            ->where('tahun_akademik', '2024/2025') 
             ->whereIn('status', ['revisi'])
             ->with('mataKuliah')
             ->firstOrFail();
@@ -149,7 +148,7 @@ class RpsController extends Controller
     {
         $mahasiswa = Auth::user()->mahasiswa;
         $rps = RencanaStudi::where('mahasiswa_id', $mahasiswa->id)
-            ->where('tahun_akademik', '2024/2025') // TODO: Dinamiskan nanti
+            ->where('tahun_akademik', '2024/2025') 
             ->where('status', 'revisi')
             ->firstOrFail();
 
@@ -162,7 +161,7 @@ class RpsController extends Controller
     {
         $mahasiswa = Auth::user()->mahasiswa;
         $rps = RencanaStudi::where('mahasiswa_id', $mahasiswa->id)
-            ->where('tahun_akademik', '2024/2025') // TODO: Dinamiskan nanti
+            ->where('tahun_akademik', '2024/2025') 
             ->where('status', 'revisi')
             ->firstOrFail();
         
