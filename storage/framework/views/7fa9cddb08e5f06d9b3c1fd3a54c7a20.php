@@ -10,7 +10,134 @@
     <style>
         :root{--ink:#111827;--muted:#6B7280;--bg:#F3F4F6;--card:#fff;--ring:#E5E7EB;--primary:#4F46E5;--danger:#EF4444;--success:#10B981}
         body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
-        .app-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff}
+/* App Header & Navigation */
+        .app-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 2rem;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 4rem; /* 64px */
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .my-frs {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #2d3748;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .my-frs:hover {
+            color: #4a90e2;
+        }
+        
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.875rem;
+            transition: background-color 0.2s ease;
+        }
+        .dropdown-toggle:hover {
+            background-color: #f7fafc;
+        }
+        
+        .dropdown-toggle .user-name {
+            display: none;
+        }
+        @media (min-width: 640px) {
+            .dropdown-toggle .user-name {
+                display: block;
+            }
+        }
+
+        .dropdown-toggle svg {
+            width: 1rem;
+            height: 1rem;
+            stroke: currentColor;
+            transition: transform 0.2s ease;
+        }
+
+        .dropdown-toggle.open svg {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            min-width: 12rem; /* 192px */
+            z-index: 20;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.875rem;
+            color: #4a5568;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+        .dropdown-item:hover {
+            background-color: #f7fafc;
+        }
+        
+        .dropdown-item-form button {
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            color: #4a5568;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+        .dropdown-item-form button:hover {
+            background-color: #f7fafc;
+        }
         .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
         .brand .logo{background:#fff;color:#111827;border-radius:10px;padding:8px 12px}
         nav a{color:#e5e7eb;text-decoration:none;margin-right:16px;font-weight:500}
@@ -29,13 +156,29 @@
 </head>
 <body>
     <header class="app-header">
-        <div class="brand"><span class="logo">MyFRS</span><span>Detail RPS</span></div>
-        <nav>
-            <a href="<?php echo e(route('dashboard')); ?>">Dashboard</a>
-            <form action="<?php echo e(route('logout')); ?>" method="POST" style="display:inline">
-                <?php echo csrf_field(); ?>
-                <button type="submit" class="logout-btn">Logout</button>
-            </form>
+        <nav class="navbar">
+            <!-- Logo -->
+            <a href="<?php echo e(url('/dashboard')); ?>" class="my-frs">MyFRS <span>Dosen</span></a>
+
+            <!-- User Menu Dropdown -->
+            <div class="dropdown">
+                <button id="user-menu-button" class="dropdown-toggle" type="button">
+                    <span class="user-name"><?php echo e(Auth::user()->name); ?></span>
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </button>
+                <div id="user-menu" class="dropdown-menu">
+                    <a href="<?php echo e(route('profile.edit')); ?>" class="dropdown-item">Profile</a>
+                    <a href="<?php echo e(route('dashboard')); ?>" class="dropdown-item">Dashboard</a>
+                    <form method="POST" action="<?php echo e(route('logout')); ?>" class="dropdown-item-form">
+                        <?php echo csrf_field(); ?>
+                        <button type="submit">
+                            Log Out
+                        </button>
+                    </form>
+                </div>
+            </div>
         </nav>
     </header>
 

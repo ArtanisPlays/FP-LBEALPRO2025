@@ -15,11 +15,15 @@ class RpsController extends Controller
         // Asumsi mahasiswa saat ini berada di semester 3
         $currentSemester = 3;
 
-        // 1. Ambil SEMUA kode MK yang sudah 'lulus' (asumsi: semua MK dari semester < 3)
-        $completedCourses = MataKuliah::where('semester', '<', $currentSemester)->orderBy('semester', 'asc')->get();
-        $passedCourseCodes = $completedCourses->pluck('kode_mk')->toArray();
+        // ambil semua matkul kecuali strukdat
+        $completedCourses = MataKuliah::where('semester', '<', $currentSemester)
+            ->orderBy('semester', 'asc')
+            ->get();
+            
+        $passedCourseCodes = $completedCourses->where('kode_mk', '!=', 'EF234201')->pluck('kode_mk')->toArray(); // Diubah ke kode Strukdat
 
-        // 2. Ambil semua mata kuliah yang ditawarkan di semester ini DAN semester atas
+
+        // Ambil semua mata kuliah yang ditawarkan di semester ini DAN semester atas
         $availableCourses = MataKuliah::where('semester', '>=', $currentSemester)
                                 ->with('prerequisites') // Eager load prerequisites
                                 ->orderBy('semester', 'asc')
@@ -27,11 +31,10 @@ class RpsController extends Controller
         
         $unmetPrerequisites = [];
         foreach ($availableCourses as $mk) {
-            $isWarning = $mk->semester > $currentSemester; // Tandai sebagai warning jika MK semester atas
+            $isWarning = $mk->semester > $currentSemester; 
             $unmetList = [];
 
             foreach ($mk->prerequisites as $prasyarat) {
-                // Jika kode prasyarat tidak ada di daftar MK yang sudah lulus
                 if (!in_array($prasyarat->kode_mk, $passedCourseCodes)) {
                     $unmetList[] = $prasyarat->nama_mk;
                 }
@@ -44,7 +47,6 @@ class RpsController extends Controller
             }
         }
         
-        // 3. Kirim semua data yang dibutuhkan oleh view
         return view('mahasiswa.rps.create', compact('availableCourses', 'completedCourses', 'unmetPrerequisites'));
     }
 
@@ -56,33 +58,31 @@ class RpsController extends Controller
 
         $mahasiswa = Auth::user()->mahasiswa;
         
-        // Asumsi mahasiswa saat ini berada di semester 3
         $currentSemester = 3;
-        $passedCourseCodes = MataKuliah::where('semester', '<', $currentSemester)->pluck('kode_mk')->toArray();
+        // Simulasi yang sama saat menyimpan
+        $passedCourseCodes = MataKuliah::where('semester', '<', $currentSemester)
+            ->where('kode_mk', '!=', 'EF234201') // Diubah ke kode Strukdat
+            ->pluck('kode_mk')->toArray();
         
         $selectedMKs = MataKuliah::with('prerequisites')->whereIn('id', $request->matakuliah_ids)->get();
 
         $jadwal = [];
-        $needsApproval = false; // Flag untuk menandai jika ada MK lintas semester
+        $needsApproval = false;
 
         foreach ($selectedMKs as $mk) {
-            // Cek apakah MK ini dari semester atas
             if ($mk->semester > $currentSemester) {
                 $needsApproval = true;
             }
 
-            // Validasi Prasyarat
             foreach($mk->prerequisites as $prasyarat) {
                 if (!in_array($prasyarat->kode_mk, $passedCourseCodes)) {
-                    // Jika MK dari semester atas, ini hanya warning, bukan error
                     if ($mk->semester > $currentSemester) {
-                        continue; // Lanjutkan proses
+                        continue;
                     }
                     return back()->withErrors(['jadwal_bentrok' => "Anda tidak dapat mengambil '{$mk->nama_mk}' karena prasyarat '{$prasyarat->nama_mk}' belum terpenuhi."])->withInput();
                 }
             }
 
-            // Validasi Jadwal Bentrok
             $waktu = "{$mk->hari}-{$mk->jam_mulai}-{$mk->jam_selesai}";
             if (isset($jadwal[$waktu])) {
                 return back()->withErrors(['jadwal_bentrok' => "Jadwal bentrok antara '{$mk->nama_mk}' dan '{$jadwal[$waktu]}'."])->withInput();
@@ -90,7 +90,6 @@ class RpsController extends Controller
             $jadwal[$waktu] = $mk->nama_mk;
         }
         
-        // Tentukan status berdasarkan flag
         $status = $needsApproval ? 'perlu_persetujuan' : 'diajukan';
 
         DB::transaction(function () use ($request, $mahasiswa, $currentSemester, $status) {
@@ -108,7 +107,7 @@ class RpsController extends Controller
     {
         $mahasiswa = Auth::user()->mahasiswa;
         $rps = RencanaStudi::where('mahasiswa_id', $mahasiswa->id)
-            ->where('tahun_akademik', '2024/2025') // TODO: Dinamiskan nanti
+            ->where('tahun_akademik', '2024/2025')
             ->where('status', 'disetujui')
             ->with('mataKuliah')
             ->firstOrFail();
@@ -120,7 +119,7 @@ class RpsController extends Controller
     {
         $mahasiswa = Auth::user()->mahasiswa;
         $rps = RencanaStudi::where('mahasiswa_id', $mahasiswa->id)
-            ->where('tahun_akademik', '2024/2025') // TODO: Dinamiskan nanti
+            ->where('tahun_akademik', '2024/2025')
             ->whereIn('status', ['revisi'])
             ->with('mataKuliah')
             ->firstOrFail();
@@ -132,7 +131,7 @@ class RpsController extends Controller
     {
         $mahasiswa = Auth::user()->mahasiswa;
         $rps = RencanaStudi::where('mahasiswa_id', $mahasiswa->id)
-            ->where('tahun_akademik', '2024/2025') // TODO: Dinamiskan nanti
+            ->where('tahun_akademik', '2024/2025')
             ->where('status', 'revisi')
             ->firstOrFail();
 
@@ -145,7 +144,7 @@ class RpsController extends Controller
     {
         $mahasiswa = Auth::user()->mahasiswa;
         $rps = RencanaStudi::where('mahasiswa_id', $mahasiswa->id)
-            ->where('tahun_akademik', '2024/2025') // TODO: Dinamiskan nanti
+            ->where('tahun_akademik', '2024/2025')
             ->where('status', 'revisi')
             ->firstOrFail();
         

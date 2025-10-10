@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class DosenWaliController extends Controller
 {
-    /**
-     * Menampilkan daftar RPS dari mahasiswa bimbingan.
-     */
+    
+    // menampilkan daftar RPS dari mahasiswa bimbingan.
+    
     public function index()
     {
         $dosenId = Auth::id();
@@ -57,7 +57,7 @@ class DosenWaliController extends Controller
         return redirect()->route('dosen.validasi.index')->with('success', 'Status RPS berhasil diperbarui.');
     }
     
-    // --- FUNGSI BARU UNTUK VERIFIKASI ---
+    // verifikasi akun mahasiswa baru yang mendaftar
 
     public function verificationList()
     {

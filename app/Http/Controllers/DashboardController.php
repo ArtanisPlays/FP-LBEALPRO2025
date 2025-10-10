@@ -13,9 +13,9 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'admin') {
-            return view('admin.dashboard');
-        } 
+        // if ($user->role === 'admin') {
+        //     return view('admin.dashboard');
+        // } 
         
         if ($user->role === 'dosen') {
             // Menghitung jumlah RPS yang statusnya 'diajukan' atau 'perlu_persetujuan'
@@ -33,7 +33,7 @@ class DashboardController extends Controller
         if ($user->mahasiswa) {
             $mahasiswa = $user->mahasiswa;
             $rps = RencanaStudi::where('mahasiswa_id', $mahasiswa->id)
-                ->where('tahun_akademik', '2024/2025') // TODO: Dinamiskan
+                ->where('tahun_akademik', '2024/2025') 
                 ->first();
             
             // HANYA kirim data mahasiswa dan rps, BUKAN daftar mata kuliah
